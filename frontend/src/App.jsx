@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 // STUDENT TODO: This API_URL works for local development
 // For Docker, you may need to configure nginx proxy or use container networking
-const API_URL = process.env.REACT_APP_API_URL || 'http://103.1.236.26:8081';
+const API_URL = process.env.REACT_APP_API_URL || 'http://103.1.236.26:18081';
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -57,21 +57,28 @@ function App() {
 
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {todos.map(todo => (
-          <li
-            key={todo.id}
-            style={{
-              padding: '10px',
-              border: '1px solid #ddd',
-              marginBottom: '5px',
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}
-          >
+          <li key={todo.id} style={{
+            padding: '10px',
+            border: '1px solid #ddd',
+            marginBottom: '5px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
             <span>{todo.title}</span>
             <small>{todo.completed ? '✅' : '⏳'}</small>
           </li>
         ))}
       </ul>
+
+      <div style={{ marginTop: '30px', fontSize: '12px', color: '#666' }}>
+        <p><strong>STUDENT TODO:</strong></p>
+        <ul>
+          <li>Dockerfile (multi-stage)</li>
+          <li>Fix backend validation (broken test)</li>
+          <li>CI/CD pipeline</li>
+          <li>REPORT.md + Slides</li>
+        </ul>
+      </div>
     </div>
   );
 }

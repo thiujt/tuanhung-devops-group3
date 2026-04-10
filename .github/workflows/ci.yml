@@ -86,7 +86,7 @@ jobs:
           port: 22
           script: |
             apt-get update
-            apt-get install -y git docker-compose || true
+            apt-get install -y git docker-compose psmisc || true
 
             mkdir -p /home/app
             cd /home/app
@@ -99,10 +99,17 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
+            sudo fuser -k 13001/tcp || true
+            sudo fuser -k 18081/tcp || true
+
+            docker ps -aq --filter "name=tuanhung-devops-group3" | xargs -r docker rm -f
+
             if command -v docker-compose >/dev/null 2>&1; then
-              docker-compose down || true
+              docker-compose down --remove-orphans || true
               docker-compose up -d --build --remove-orphans
+              docker-compose ps
             else
-              docker compose down || true
+              docker compose down --remove-orphans || true
               docker compose up -d --build --remove-orphans
+              docker compose ps
             fi
