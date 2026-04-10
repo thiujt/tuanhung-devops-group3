@@ -64,7 +64,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm install
 
       - name: Build frontend
         working-directory: ./frontend
@@ -81,22 +81,27 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
             apt-get update
-            apt-get install -y git docker-compose
+            apt-get install -y git docker-compose || true
 
             mkdir -p /home/app
             cd /home/app
 
-            if [ ! -d devops-project-hcm ]; then
-              git clone https://github.com/hoangbuu113/devops-project-hcm.git
+            if [ ! -d tuanhung-devops-group3 ]; then
+              git clone https://github.com/thiujt/tuanhung-devops-group3.git
             fi
 
-            cd /home/app/devops-project-hcm
+            cd /home/app/tuanhung-devops-group3
             git fetch origin
             git reset --hard origin/main
 
-            docker-compose down || true
-            docker-compose up -d --build
+            if command -v docker-compose >/dev/null 2>&1; then
+              docker-compose down || true
+              docker-compose up -d --build --remove-orphans
+            else
+              docker compose down || true
+              docker compose up -d --build --remove-orphans
+            fi
