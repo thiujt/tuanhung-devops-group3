@@ -42,6 +42,14 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Initialize test database
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d tododb -f ./database/database.sql
+
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm ci
