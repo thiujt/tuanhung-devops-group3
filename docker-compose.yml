@@ -47,26 +47,24 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
   # STUDENT TODO: Define backend service
   backend:
     build: ./backend
     # TODO: Add ports, environment, depends_on, healthcheck
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: tododb
+      DB_NAME: devops_db
       DB_USER: postgres
       DB_PASSWORD: postgres
-      PORT: 8080
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:8080/health || exit 1"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080', (res) => {process.exit(res.statusCode === 200 ? 0 : 1)})"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -76,14 +74,14 @@ services:
     image: postgres:15-alpine
     # TODO: Add environment, ports, volumes, healthcheck
     environment:
-      POSTGRES_DB: tododb
+      POSTGRES_DB: devops_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d tododb"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d devops_db"]
       interval: 10s
       timeout: 5s
       retries: 5
